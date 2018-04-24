@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "515164723930",
+    "firebase_url": "https://tyopendata.firebaseio.com",
+    "project_id": "tyopendata",
+    "storage_bucket": "tyopendata.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515164723930:android:60f4748a4f5fc157",
+        "android_client_info": {
+          "package_name": "maynoothuniversity.bcd.tyopendata"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515164723930-6bs2peotacuf9jiovfgt51nahvr53kpv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "maynoothuniversity.bcd.tyopendata",
+            "certificate_hash": "afe5c5b8d76e046187955540511723e1ea1ba913"
+          }
+        },
+        {
+          "client_id": "515164723930-fr6htnuesgf58bvohhkndt7phgms55j0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2ry9m-S9UkPhRJFP83mhSZWLhWuFcaLE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515164723930-fr6htnuesgf58bvohhkndt7phgms55j0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

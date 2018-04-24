@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TY OpenData</string>
+    <string name="mapbox_api_key">pk.eyJ1IjoiZGF3bml0aGFuIiwiYSI6ImNqZzd5bXFiaDBvNnEyd3FsMmdrZjcyZWcifQ.OcAWMLo4rGKkQOXz6vqSJA</string>
+</resources>
