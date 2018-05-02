@@ -29,6 +29,8 @@ import com.mapbox.mapboxsdk.style.sources.Source;
 import java.io.InputStream;
 import java.util.List;
 
+import timber.log.Timber;
+
 import static com.mapbox.mapboxsdk.style.expressions.Expression.all;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.gte;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.lt;
@@ -73,11 +75,7 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
         mapboxMap.setMinZoomPreference(10);
 
         addClusters();
-
-        FeatureCollection emptySource = FeatureCollection.fromFeatures(new Feature[]{});
-        Source selectedMarkerSource = new GeoJsonSource("selected-marker", emptySource);
-        mapboxMap.addSource(selectedMarkerSource);
-
+        
         mapboxMap.addOnMapClickListener(this);
 
     }
@@ -85,7 +83,8 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapClick(@NonNull LatLng point) {
         PointF screenPoint = mapboxMap.getProjection().toScreenLocation(point);
-        List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, "unclustered-points");
+        List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint,
+                "unclustered-points-CITIZEN", "unclustered-points-EDUCATION", "unclustered-points-HEALTH", "unclustered-points-SPORT");
         if (!features.isEmpty()) {
             Feature selectedFeature = features.get(0);
             String title = selectedFeature.getStringProperty("Name");
@@ -94,55 +93,174 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
     private void addClusters() {
-        String geoJson = loadGeoJsonFromAsset("ballyfermot.geojson");
+        //String geoJson = loadGeoJsonFromAsset("ballyfermot.geojson");
+        String CITIZEN_SERVICES = loadGeoJsonFromAsset("citizen_services.geojson");
+        String EDUCATION = loadGeoJsonFromAsset("education.geojson");
+        String HEALTH = loadGeoJsonFromAsset("health.geojson");
+        String SPORT = loadGeoJsonFromAsset("sport.geojson");
+
+        // Create layers for each data source (CS, education, health, sport)
         try {
-            GeoJsonSource geoJsonSource = new GeoJsonSource("data-layer", geoJson, new GeoJsonOptions()
-                    .withCluster(true)
-                    .withClusterMaxZoom(14)
-                    .withClusterRadius(50)
-            );
-            mapboxMap.addSource(geoJsonSource);
+            if (CITIZEN_SERVICES != null) {
+                GeoJsonSource citizenServicesSource = new GeoJsonSource("citizen-services-layer", CITIZEN_SERVICES, new GeoJsonOptions()
+                        .withCluster(true)
+                        .withClusterMaxZoom(14)
+                        .withClusterRadius(50)
+                );
+                mapboxMap.addSource(citizenServicesSource);
+            }
+            if (EDUCATION != null) {
+                GeoJsonSource educationSource = new GeoJsonSource("education-layer", EDUCATION, new GeoJsonOptions()
+                        .withCluster(true)
+                        .withClusterMaxZoom(14)
+                        .withClusterRadius(50)
+                );
+                mapboxMap.addSource(educationSource);
+            }
+            if (HEALTH != null) {
+                GeoJsonSource healthSource = new GeoJsonSource("health-layer", HEALTH, new GeoJsonOptions()
+                        .withCluster(true)
+                        .withClusterMaxZoom(14)
+                        .withClusterRadius(50)
+                );
+                mapboxMap.addSource(healthSource);
+            }
+            if (SPORT != null) {
+                GeoJsonSource sportSource = new GeoJsonSource("sport-layer", SPORT, new GeoJsonOptions()
+                        .withCluster(true)
+                        .withClusterMaxZoom(14)
+                        .withClusterRadius(50)
+                );
+                mapboxMap.addSource(sportSource);
+            }
         } catch (Exception exception) {
-            Log.e("AddClusters", exception.toString());
+            Timber.e(exception.toString());
         }
 
+        // Circles based on density
         int[][] layers = new int[][]{
                 new int[]{150, Color.parseColor("#dd1c77")},
                 new int[]{20, Color.parseColor("#addd8e")},
                 new int[]{0, Color.parseColor("#2b8cbe")}
         };
 
-        Bitmap icon = BitmapFactory.decodeResource(
-               this.getResources(), R.drawable.school_marker);
-        mapboxMap.addImage("education-image", icon);
+        // Set up icons
+        Bitmap citizenIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.citizens_marker);
+        Bitmap educationIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.education_marker);
+        Bitmap healthIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.health_marker);
+        Bitmap sportIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.sport_marker);
+        mapboxMap.addImage("citizen-image", citizenIcon);
+        mapboxMap.addImage("education-image", educationIcon);
+        mapboxMap.addImage("health-image", healthIcon);
+        mapboxMap.addImage("sport-image", sportIcon);
 
-        SymbolLayer dataUnclustered = new SymbolLayer("unclustered-points", "data-layer");
-        dataUnclustered.withProperties(
-                iconImage("school-15"),
-                iconSize(1.5f),
+        // Markers on their own
+        SymbolLayer citzensUnclustered = new SymbolLayer("unclustered-points-CITIZEN", "citizen-services-layer");
+        citzensUnclustered.withProperties(
+                iconImage("citizen-image"),
+                iconSize(0.5f),
                 visibility(VISIBLE)
         );
-        mapboxMap.addLayer(dataUnclustered);
+        SymbolLayer educationUnclustered = new SymbolLayer("unclustered-points-EDUCATION", "education-layer");
+        educationUnclustered.withProperties(
+                iconImage("education-image"),
+                iconSize(0.5f),
+                visibility(VISIBLE)
+        );
+        SymbolLayer healthUnclustered = new SymbolLayer("unclustered-points-HEALTH", "health-layer");
+        healthUnclustered.withProperties(
+                iconImage("health-image"),
+                iconSize(0.5f),
+                visibility(VISIBLE)
+        );
+        SymbolLayer sportUnclustered = new SymbolLayer("unclustered-points-SPORT", "sport-layer");
+        sportUnclustered.withProperties(
+                iconImage("sport-image"),
+                iconSize(0.5f),
+                visibility(VISIBLE)
+        );
+
+        mapboxMap.addLayer(citzensUnclustered);
+        mapboxMap.addLayer(healthUnclustered);
+        mapboxMap.addLayer(educationUnclustered);
+        mapboxMap.addLayer(sportUnclustered);
 
         for (int i = 0; i < layers.length; i++) {
-            CircleLayer circlesData = new CircleLayer("clusterData-" + i, "data-layer");
-            circlesData.setProperties(
+            CircleLayer csCircle = new CircleLayer("csData-" + i, "citizen-services-layer");
+            csCircle.setProperties(
                     circleColor(layers[i][1]),
                     circleRadius(18f)
             );
-            circlesData.setFilter(
+            CircleLayer eduCircle = new CircleLayer("eduData-" + i, "education-layer");
+            eduCircle.setProperties(
+                    circleColor(layers[i][1]),
+                    circleRadius(18f)
+            );
+            CircleLayer healthCircle = new CircleLayer("healthData-" + i, "health-layer");
+            healthCircle.setProperties(
+                    circleColor(layers[i][1]),
+                    circleRadius(18f)
+            );
+            CircleLayer sportCircle = new CircleLayer("sportData-" + i, "sport-layer");
+            sportCircle.setProperties(
+                    circleColor(layers[i][1]),
+                    circleRadius(18f)
+            );
+
+            // Filter
+            csCircle.setFilter(
                     i == 0 ? gte(Expression.literal(("point_count")), layers[i][0]) :
                             all(gte(Expression.literal(("point_count")), layers[i][0]), lt(Expression.literal(("point_count")), layers[i - 1][0]))
             );
-            mapboxMap.addLayer(circlesData);
+            eduCircle.setFilter(
+                    i == 0 ? gte(Expression.literal(("point_count")), layers[i][0]) :
+                            all(gte(Expression.literal(("point_count")), layers[i][0]), lt(Expression.literal(("point_count")), layers[i - 1][0]))
+            );
+            healthCircle.setFilter(
+                    i == 0 ? gte(Expression.literal(("point_count")), layers[i][0]) :
+                            all(gte(Expression.literal(("point_count")), layers[i][0]), lt(Expression.literal(("point_count")), layers[i - 1][0]))
+            );
+            sportCircle.setFilter(
+                    i == 0 ? gte(Expression.literal(("point_count")), layers[i][0]) :
+                            all(gte(Expression.literal(("point_count")), layers[i][0]), lt(Expression.literal(("point_count")), layers[i - 1][0]))
+            );
+
+            mapboxMap.addLayer(csCircle);
+            mapboxMap.addLayer(eduCircle);
+            mapboxMap.addLayer(healthCircle);
+            mapboxMap.addLayer(sportCircle);
         }
-        SymbolLayer countData = new SymbolLayer("countData", "data-layer");
-        countData.setProperties(
+
+        // Number text (e.g., '2', '3')
+        SymbolLayer csText = new SymbolLayer("csDataText", "citizen-services-layer");
+        csText.setProperties(
                 textField("{point_count}"),
                 textSize(12f),
                 textColor(Color.WHITE)
         );
-        mapboxMap.addLayer(countData);
+        SymbolLayer eduText = new SymbolLayer("eduDataText", "education-layer");
+        eduText.setProperties(
+                textField("{point_count}"),
+                textSize(12f),
+                textColor(Color.WHITE)
+        );
+        SymbolLayer healthText = new SymbolLayer("healthDataText", "health-layer");
+        healthText.setProperties(
+                textField("{point_count}"),
+                textSize(12f),
+                textColor(Color.WHITE)
+        );
+        SymbolLayer sportText = new SymbolLayer("sportDataText", "sport-layer");
+        sportText.setProperties(
+                textField("{point_count}"),
+                textSize(12f),
+                textColor(Color.WHITE)
+        );
+
+        mapboxMap.addLayer(csText);
+        mapboxMap.addLayer(eduText);
+        mapboxMap.addLayer(healthText);
+        mapboxMap.addLayer(sportText);
     }
 
     @Nullable
@@ -157,7 +275,7 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
             return new String(buffer, "UTF-8");
 
         } catch (Exception exception) {
-            Log.e("GeoJSON Activity ", "Exception Loading GeoJSON: " + exception.toString());
+            Timber.e("Exception Loading GeoJSON: %s", exception.toString());
             exception.printStackTrace();
             return null;
         }
