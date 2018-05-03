@@ -4,16 +4,28 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -21,18 +33,21 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.style.expressions.Expression;
 import com.mapbox.mapboxsdk.style.layers.CircleLayer;
+import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-import com.mapbox.mapboxsdk.style.sources.Source;
 
 import java.io.InputStream;
 import java.util.List;
+
+import timber.log.Timber;
 
 import static com.mapbox.mapboxsdk.style.expressions.Expression.all;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.gte;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.lt;
+import static com.mapbox.mapboxsdk.style.layers.Property.NONE;
 import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius;
@@ -60,6 +75,12 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
         Mapbox.getInstance(this, getString(R.string.mapbox_api_key));
         setContentView(R.layout.activity_geojson);
 
+        Toolbar toolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_layers_black_24dp);
+        toolbar.setOverflowIcon(drawable);
+
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
@@ -73,35 +94,113 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
         mapboxMap.setMaxZoomPreference(18);
         mapboxMap.setMinZoomPreference(10);
 
+        mapboxMap.getUiSettings().setRotateGesturesEnabled(false);
+
         addClusters();
 
         mapboxMap.addOnMapClickListener(this);
 
     }
 
+    // Interaction!
     @Override
     public void onMapClick(@NonNull LatLng point) {
         PointF screenPoint = mapboxMap.getProjection().toScreenLocation(point);
-        List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint,
-                "unclustered-points1", "unclustered-points2", "unclustered-points3", "unclustered-points4");
+        List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, "unclustered-points1", "unclustered-points2", "unclustered-points3", "unclustered-points4");
+        List<Feature> cluster = mapboxMap.queryRenderedFeatures(screenPoint, "clusterData-" + 1, "clusterData-" + 2);
+
+        Display screenOrientation = getWindowManager().getDefaultDisplay();
+        double currentZoom = mapboxMap.getCameraPosition().zoom;
+        int half = (int)mapboxMap.getHeight()/2;
+
+        // Zoom into cluster
+        if(cluster.size() > 0) {
+            CameraPosition position = new CameraPosition.Builder()
+                    .target(point)
+                    .zoom(currentZoom+2)
+                    .build();
+            mapboxMap.easeCamera(CameraUpdateFactory.newCameraPosition(position));
+        }
+
+        // Select a marker
         if (!features.isEmpty()) {
             Feature selectedFeature = features.get(0);
-            String title = selectedFeature.getStringProperty("Name");
-            Toast.makeText(this, "You selected " + title, Toast.LENGTH_SHORT).show();
+//            String title = selectedFeature.getStringProperty("Name");
+//            Toast.makeText(this, "You selected " + title, Toast.LENGTH_SHORT).show();
+
+            if (screenOrientation.getWidth() == screenOrientation.getHeight()) {
+                // Square
+                CameraPosition position = new CameraPosition.Builder()
+                        .target(point)
+                        .build();
+                mapboxMap.easeCamera(CameraUpdateFactory.newCameraPosition(position));
+            } else {
+                if (screenOrientation.getWidth() < screenOrientation.getHeight()) {
+                    // Portrait
+                    CameraPosition position = new CameraPosition.Builder()
+                            .target(point)
+                            .build();
+                    mapboxMap.easeCamera(CameraUpdateFactory.newCameraPosition(position));
+                } else {
+                    // Landscape
+                    mapboxMap.setPadding(0, 0, 0, half);
+                    CameraPosition position = new CameraPosition.Builder()
+                            .target(point)
+                            .build();
+                    mapboxMap.easeCamera(CameraUpdateFactory.newCameraPosition(position));
+                }
+            }
+
+            AlertDialog.Builder popupBuilder = new AlertDialog.Builder(GeoJsonActivity.this);
+            View view = getLayoutInflater().inflate(R.layout.popup, null);
+
+            TextView name = view.findViewById(R.id.name);
+            TextView address = view.findViewById(R.id.address);
+            TextView phone = view.findViewById(R.id.phone);
+            TextView website = view.findViewById(R.id.website);
+            TextView email = view.findViewById(R.id.email);
+
+            name.setText(selectedFeature.getStringProperty("Name"));
+            address.setText(selectedFeature.getStringProperty("Address"));
+            if(selectedFeature.getStringProperty("Phone").length() > 0) phone.setText(selectedFeature.getStringProperty("Phone"));
+            if(selectedFeature.getStringProperty("Website").length() > 0) website.setText(selectedFeature.getStringProperty("Website"));
+            if(selectedFeature.getStringProperty("Email").length() > 0) email.setText(selectedFeature.getStringProperty("Email"));
+
+            popupBuilder.setView(view);
+            AlertDialog dialog = popupBuilder.create();
+
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setDimAmount(0.0f); // 0 = no dim, 1 = full dim
+            }
+
+            WindowManager.LayoutParams wlp;
+            if (window != null) {
+                wlp = window.getAttributes();
+                wlp.gravity = Gravity.BOTTOM;
+                window.setAttributes(wlp);
+            }
+            dialog.show();
         }
     }
 
+    // Clustering!
     private void addClusters() {
-        String geoJson = loadGeoJsonFromAsset("ballyfermot.geojson");
+        String geoJson = loadGeoJsonFromAsset();
         try {
-            GeoJsonSource geoJsonSource = new GeoJsonSource("data-layer", geoJson, new GeoJsonOptions()
-                    .withCluster(true)
-                    .withClusterMaxZoom(14)
-                    .withClusterRadius(50)
-            );
-            mapboxMap.addSource(geoJsonSource);
+            GeoJsonSource geoJsonSource = null;
+            if (geoJson != null) {
+                geoJsonSource = new GeoJsonSource("data-layer", geoJson, new GeoJsonOptions()
+                        .withCluster(true)
+                        .withClusterMaxZoom(14)
+                        .withClusterRadius(50)
+                );
+            }
+            if (geoJsonSource != null) {
+                mapboxMap.addSource(geoJsonSource);
+            }
         } catch (Exception exception) {
-            Log.e("AddClusters", exception.toString());
+            Timber.e(exception.toString());
         }
 
         int[][] layers = new int[][]{
@@ -123,28 +222,28 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
         SymbolLayer dataUnclustered1 = new SymbolLayer("unclustered-points1", "data-layer");
         dataUnclustered1.withProperties(
                 iconImage("citizen-image"),
-                iconSize(0.5f),
+                iconSize(0.67f),
                 visibility(VISIBLE)
             ).withFilter(eq(Expression.literal("Type"),"Citizen Service")
         );
         SymbolLayer dataUnclustered2 = new SymbolLayer("unclustered-points2", "data-layer");
         dataUnclustered2.withProperties(
                 iconImage("education-image"),
-                iconSize(0.5f),
+                iconSize(0.67f),
                 visibility(VISIBLE)
             ).withFilter(eq(Expression.literal("Type"),"Education")
         );
         SymbolLayer dataUnclustered3 = new SymbolLayer("unclustered-points3", "data-layer");
         dataUnclustered3.withProperties(
                 iconImage("health-image"),
-                iconSize(0.5f),
+                iconSize(0.67f),
                 visibility(VISIBLE)
             ).withFilter(eq(Expression.literal("Type"),"Health")
         );
         SymbolLayer dataUnclustered4 = new SymbolLayer("unclustered-points4", "data-layer");
         dataUnclustered4.withProperties(
                 iconImage("sport-image"),
-                iconSize(0.5f),
+                iconSize(0.67f),
                 visibility(VISIBLE)
             ).withFilter(eq(Expression.literal("Type"),"Sport")
         );
@@ -176,10 +275,10 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
     @Nullable
-    private String loadGeoJsonFromAsset(String filename) {
+    private String loadGeoJsonFromAsset() {
         try {
             // Load GeoJSON file
-            InputStream is = getAssets().open(filename);
+            InputStream is = getAssets().open("ballyfermot.geojson");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -187,9 +286,94 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
             return new String(buffer, "UTF-8");
 
         } catch (Exception exception) {
-            Log.e("GeoJSON Activity ", "Exception Loading GeoJSON: " + exception.toString());
+            Timber.e("Exception Loading GeoJSON: %s", exception.toString());
             exception.printStackTrace();
             return null;
+        }
+    }
+
+    // Toolbar Options
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.layer_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.citizen_toggle:
+                //toggle("CS");
+                makeToast("WIP", 1);
+                break;
+            case R.id.education_toggle:
+                //toggle("Edu");
+                makeToast("WIP", 1);
+                break;
+            case R.id.health_toggle:
+                //toggle("Health");
+                makeToast("WIP", 1);
+                break;
+            case R.id.sport_toggle:
+                //toggle("Sport");
+                makeToast("WIP", 1);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void toggle(String type) {
+        if (type.equals("CS")) {
+            changeLayer("unclustered-points1");
+        }
+        if (type.equals("Edu")) {
+            changeLayer("unclustered-points2");
+        }
+        if (type.equals("Health")) {
+            changeLayer("unclustered-points3");
+        }
+        if (type.equals("Sport")) {
+            changeLayer("unclustered-points4");
+        }
+    }
+
+    private void changeLayer(String layerName) {
+        // toggle the individual markers
+        Layer layer_points = mapboxMap.getLayer(layerName);
+        if (layer_points != null) {
+            if (VISIBLE.equals(layer_points.getVisibility().getValue())) {
+                layer_points.setProperties(visibility(NONE));
+            } else {
+                layer_points.setProperties(visibility(VISIBLE));
+            }
+        }
+        for(int i = 0; i <= 3; i++) {
+            // toggle circles
+            Layer layer = mapboxMap.getLayer("clusterData-" + i);
+            if (layer != null) {
+                if (VISIBLE.equals(layer.getVisibility().getValue())) {
+                    layer.setProperties(visibility(NONE));
+                } else {
+                    layer.setProperties(visibility(VISIBLE));
+                }
+            }
+            Layer layer_nums = mapboxMap.getLayer("countData");
+            if (layer_nums != null) {
+                layer_nums.setProperties(
+                        textField("{point_count}"),
+                        textSize(12f),
+                        textColor(Color.WHITE)
+                );
+            }
+        }
+    }
+
+    private void makeToast(String message, int duration) {
+        if(duration == 1) {
+            Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
         }
     }
 

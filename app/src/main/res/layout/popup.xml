@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#f2f2f2"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+
+            android:padding="5dp"
+            android:paddingTop="10dp"
+            android:text=""
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:text=""
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/address"
+
+            android:textAlignment="center"
+            android:padding="5dp"
+            android:text=""
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/website"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/phone"
+
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:text=""
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/website"
+
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:text=""
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="14sp" />
+
+    </RelativeLayout>

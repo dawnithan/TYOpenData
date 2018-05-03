@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/citizen_toggle"
+        android:title="Toggle Citizen Services"/>
+
+    <item
+        android:id="@+id/education_toggle"
+        android:title="Toggle Education"/>
+
+    <item
+        android:id="@+id/health_toggle"
+        android:title="Toggle Health"/>
+
+    <item
+        android:id="@+id/sport_toggle"
+        android:title="Toggle Sport"/>
+
+</menu>
