@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">TY OpenData</string>
     <string name="mapbox_api_key">pk.eyJ1IjoiZGF3bml0aGFuIiwiYSI6ImNqZzd5bXFiaDBvNnEyd3FsMmdrZjcyZWcifQ.OcAWMLo4rGKkQOXz6vqSJA</string>
+    <string name="toggle_citizen_services">Toggle Citizen Services</string>
+    <string name="toggle_education">Toggle Education</string>
+    <string name="toggle_health">Toggle Health</string>
+    <string name="toggle_sport">Toggle Sport</string>
 </resources>

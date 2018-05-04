@@ -19,8 +19,6 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.plugins.cluster.clustering.ClusterItem;
 import com.mapbox.mapboxsdk.plugins.cluster.clustering.ClusterManagerPlugin;
 import com.mapbox.mapboxsdk.plugins.cluster.geometry.Point;
-import com.mapbox.mapboxsdk.plugins.geojson.GeoJsonPlugin;
-import com.mapbox.mapboxsdk.plugins.geojson.GeoJsonPluginBuilder;
 import com.mapbox.mapboxsdk.plugins.geojson.listener.OnLoadingGeoJsonListener;
 import com.mapbox.mapboxsdk.plugins.geojson.listener.OnMarkerEventListener;
 
@@ -68,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapboxMap.setMinZoomPreference(10);
 
         mClusterManagerPlugin = new ClusterManagerPlugin<>(this, mapboxMap);
+
         doCluster();
 
 //        GeoJsonPlugin geoJsonPlugin = new GeoJsonPluginBuilder()
@@ -83,41 +82,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    public interface IconClusterItem extends ClusterItem {
-        Icon getIcon();
-    }
-
     @Override
     public void onMarkerClickListener(Marker marker, JsonObject properties) {
-        String name, address, phone, website, email = "";
-        String snip = "";
-        if (properties.get("Name") != null) {
-            name = properties.get("Name").toString();
-            name = name.replace('"', ' ');
-            marker.setTitle(name);
-        }
-        if (properties.get("Address") != null) {
-            address = properties.get("Address").toString();
-            address = address.replace('"', ' ');
-            snip += address;
-        }
-        if (properties.get("Phone") != null) {
-            phone = properties.get("Phone").toString();
-            phone = phone.replace('"', ' ');
-            snip += phone;
-        }
-        if (properties.get("Website") != null) {
-            website = properties.get("Website").toString();
-            website = website.replace('"', ' ');
-            snip += website;
-        }
-        if (properties.get("Email") != null) {
-            email = properties.get("Email").toString();
-            email = email.replace('"', ' ');
-            snip += email;
-
-        }
-        marker.setSnippet(snip);
+//        String name, address, phone, website, email = "";
+//        String snip = "";
+//        if (properties.get("Name") != null) {
+//            name = properties.get("Name").toString();
+//            name = name.replace('"', ' ');
+//            marker.setTitle(name);
+//        }
+//        if (properties.get("Address") != null) {
+//            address = properties.get("Address").toString();
+//            address = address.replace('"', ' ');
+//            snip += address;
+//        }
+//        if (properties.get("Phone") != null) {
+//            phone = properties.get("Phone").toString();
+//            phone = phone.replace('"', ' ');
+//            snip += phone;
+//        }
+//        if (properties.get("Website") != null) {
+//            website = properties.get("Website").toString();
+//            website = website.replace('"', ' ');
+//            snip += website;
+//        }
+//        if (properties.get("Email") != null) {
+//            email = properties.get("Email").toString();
+//            email = email.replace('"', ' ');
+//            snip += email;
+//
+//        }
+//        marker.setSnippet(snip);
     }
 
     protected void doCluster() {
@@ -202,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String title = "";
                 String snippet = "";
                 JSONObject object = array.getJSONObject(i);
-                double lat = object.getDouble("Latitude"); // lol
+                double lat = object.getDouble("Latitude");
                 double lng = object.getDouble("Longitude");
                 if (!object.isNull("Name")) {
                     title = object.getString("Name");
@@ -238,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return items;
         }
     }
-    
+
     // GeoJSON Listeners
     @Override
     public void onPreLoading() {
@@ -299,5 +294,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 }
+
+
 
 

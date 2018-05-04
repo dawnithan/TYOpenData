@@ -3,18 +3,18 @@
 
     <item
         android:id="@+id/citizen_toggle"
-        android:title="Toggle Citizen Services"/>
+        android:title="@string/toggle_citizen_services"/>
 
     <item
         android:id="@+id/education_toggle"
-        android:title="Toggle Education"/>
+        android:title="@string/toggle_education"/>
 
     <item
         android:id="@+id/health_toggle"
-        android:title="Toggle Health"/>
+        android:title="@string/toggle_health"/>
 
     <item
         android:id="@+id/sport_toggle"
-        android:title="Toggle Sport"/>
+        android:title="@string/toggle_sport"/>
 
 </menu>

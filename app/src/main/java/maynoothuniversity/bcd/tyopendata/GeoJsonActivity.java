@@ -295,7 +295,8 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
     // Toolbar Options
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.layer_menu, menu);
+        //getMenuInflater().inflate(R.menu.layer_menu, menu);
+        getMenuInflater().inflate(R.menu.info_menu, menu);
         return true;
     }
 
