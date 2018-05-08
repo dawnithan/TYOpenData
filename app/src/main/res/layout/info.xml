@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/avatar_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/citizen_services"
+            android:textColor="@android:color/primary_text_light"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:paddingEnd="5dp"
+            android:drawableTop="@drawable/ic_avatar" />
+
+        <TextView
+            android:id="@+id/education_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/education"
+            android:textColor="@android:color/primary_text_light"
+            android:paddingRight="7dp"
+            android:paddingLeft="7dp"
+            android:paddingEnd="7dp"
+            android:drawableTop="@drawable/ic_open_book" />
+
+        <TextView
+            android:id="@+id/health_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/health"
+            android:textColor="@android:color/primary_text_light"
+            android:paddingRight="7dp"
+            android:paddingLeft="7dp"
+            android:paddingEnd="7dp"
+            android:drawableTop="@drawable/ic_pharmacy" />
+
+        <TextView
+            android:id="@+id/sport_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sport"
+            android:textColor="@android:color/primary_text_light"
+            android:textAlignment="center"
+            android:paddingRight="7dp"
+            android:paddingLeft="7dp"
+            android:paddingEnd="7dp"
+            android:drawableTop="@drawable/ic_trophy" />
+
+    </LinearLayout>
+</RelativeLayout>

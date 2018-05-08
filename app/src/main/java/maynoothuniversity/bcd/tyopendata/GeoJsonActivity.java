@@ -1,9 +1,11 @@
 package maynoothuniversity.bcd.tyopendata;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
@@ -117,7 +120,7 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
         if(cluster.size() > 0) {
             CameraPosition position = new CameraPosition.Builder()
                     .target(point)
-                    .zoom(currentZoom+2)
+                    .zoom(currentZoom+2.25)
                     .build();
             mapboxMap.easeCamera(CameraUpdateFactory.newCameraPosition(position));
         }
@@ -162,7 +165,7 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
 
             name.setText(selectedFeature.getStringProperty("Name"));
             address.setText(selectedFeature.getStringProperty("Address"));
-            if(selectedFeature.getStringProperty("Phone").length() > 0) phone.setText(selectedFeature.getStringProperty("Phone"));
+            if(selectedFeature.getStringProperty("Phone").length() > 0) phone.setText(String.format("Tel no.: %s", selectedFeature.getStringProperty("Phone")));
             if(selectedFeature.getStringProperty("Website").length() > 0) website.setText(selectedFeature.getStringProperty("Website"));
             if(selectedFeature.getStringProperty("Email").length() > 0) email.setText(selectedFeature.getStringProperty("Email"));
 
@@ -192,7 +195,7 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
             if (geoJson != null) {
                 geoJsonSource = new GeoJsonSource("data-layer", geoJson, new GeoJsonOptions()
                         .withCluster(true)
-                        .withClusterMaxZoom(14)
+                        .withClusterMaxZoom(16)
                         .withClusterRadius(50)
                 );
             }
@@ -304,22 +307,42 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.citizen_toggle:
-                //toggle("CS");
-                makeToast("WIP", 1);
+            case R.id.action_info:
+                AlertDialog.Builder infoBuilder = new AlertDialog.Builder(GeoJsonActivity.this, R.style.Theme_AppCompat_Light_Dialog);
+                View view = getLayoutInflater().inflate(R.layout.info, null);
+
+                infoBuilder.setView(view);
+                infoBuilder.setTitle("Info");
+                infoBuilder.setMessage(R.string.info_message);
+                infoBuilder.setPositiveButton("CLOSE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // close the dialog
+                    }
+                });
+
+                AlertDialog dialog = infoBuilder.create();
+                //dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f2f2f2")));
+                dialog.show();
+                ((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
                 break;
-            case R.id.education_toggle:
-                //toggle("Edu");
-                makeToast("WIP", 1);
-                break;
-            case R.id.health_toggle:
-                //toggle("Health");
-                makeToast("WIP", 1);
-                break;
-            case R.id.sport_toggle:
-                //toggle("Sport");
-                makeToast("WIP", 1);
-                break;
+
+//            case R.id.citizen_toggle:
+//                toggle("CS");
+//                makeToast("WIP", 1);
+//                break;
+//            case R.id.education_toggle:
+//                toggle("Edu");
+//                makeToast("WIP", 1);
+//                break;
+//            case R.id.health_toggle:
+//                toggle("Health");
+//                makeToast("WIP", 1);
+//                break;
+//            case R.id.sport_toggle:
+//                toggle("Sport");
+//                makeToast("WIP", 1);
+//                break;
         }
         return super.onOptionsItemSelected(item);
     }
