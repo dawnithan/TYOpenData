@@ -165,9 +165,17 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
 
             name.setText(selectedFeature.getStringProperty("Name"));
             address.setText(selectedFeature.getStringProperty("Address"));
-            if(selectedFeature.getStringProperty("Phone").length() > 0) phone.setText(String.format("Tel no.: %s", selectedFeature.getStringProperty("Phone")));
-            if(selectedFeature.getStringProperty("Website").length() > 0) website.setText(selectedFeature.getStringProperty("Website"));
-            if(selectedFeature.getStringProperty("Email").length() > 0) email.setText(selectedFeature.getStringProperty("Email"));
+            if(selectedFeature.getStringProperty("Phone").length() > 0) phone.setText(String.format("Tel: %s", selectedFeature.getStringProperty("Phone")));
+
+            String web = selectedFeature.getStringProperty("Website");
+            String mail = selectedFeature.getStringProperty("Email");
+
+            if(web.length() > 0) {
+                website.setText(web);
+                email.setText(mail);
+            } else if (mail.length() > 0) {
+                website.setText(mail);
+            }
 
             popupBuilder.setView(view);
             AlertDialog dialog = popupBuilder.create();

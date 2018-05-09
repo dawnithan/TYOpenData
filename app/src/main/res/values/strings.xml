@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TY OpenData</string>
+    <string name="app_name">Ballyfermot Commmunity Map</string>
     <string name="mapbox_api_key">pk.eyJ1IjoiZGF3bml0aGFuIiwiYSI6ImNqZzd5bXFiaDBvNnEyd3FsMmdrZjcyZWcifQ.OcAWMLo4rGKkQOXz6vqSJA</string>
 
     <string name="toggle_citizen_services">Toggle Citizen Services</string>
