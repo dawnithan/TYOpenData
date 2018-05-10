@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:id="@+id/icons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -58,4 +59,25 @@
             android:drawableTop="@drawable/ic_trophy" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/SFI_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/icons"
+        android:layout_alignStart="@+id/icons"
+        android:layout_below="@+id/icons"
+        android:contentDescription="@string/science_foundation_ireland_logo"
+        app:srcCompat="@drawable/ic_sfi_logo_2016__master_colour" />
+
+    <ImageView
+        android:id="@+id/BCD_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/icons"
+        android:layout_alignRight="@+id/icons"
+        android:layout_below="@+id/icons"
+        android:contentDescription="@string/building_city_dashboards_logo"
+        app:srcCompat="@drawable/ic_building_city_dashboards_horizontal_logo___colour" />
+
 </RelativeLayout>

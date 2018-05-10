@@ -9,7 +9,7 @@
 
     <string name="info">Info</string>
 
-    <string name="citizen_services">Citizen\nServices</string>
+    <string name="citizen_services">Citizen\nServices\n</string>
     <string name="education">Education</string>
     <string name="health">Health</string>
     <string name="sport">Sport</string>
@@ -17,4 +17,7 @@
     <string name="info_message">
         A community map of various citizen services, education centres, health providers and sporting places collated by the Transition Year students of St. Dominics Secondary School to serve the community of Ballyfermot.\n\nPinch in \u0026 out to scale the map, and tap markers \u0026 clusters to zoom in on them.\n\nCredit for the original map icons goes to <a href="http://www.freepik.com">Freepik</a> and <a href="https://www.flaticon.com/authors/gregor-cresnar">Gregor Cresnar</a>.\n
     </string>
+
+    <string name="science_foundation_ireland_logo">Science Foundation Ireland logo</string>
+    <string name="building_city_dashboards_logo">Building City Dashboards logo</string>
 </resources>
