@@ -80,6 +80,7 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
 
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
+        // getSupportActionBar().setDisplayShowTitleEnabled(false); <- remove the toolbar title
 
         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_layers_black_24dp);
         toolbar.setOverflowIcon(drawable);
@@ -233,28 +234,28 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
         SymbolLayer dataUnclustered1 = new SymbolLayer("unclustered-points1", "data-layer");
         dataUnclustered1.withProperties(
                 iconImage("citizen-image"),
-                iconSize(0.67f),
+                iconSize(0.70f),
                 visibility(VISIBLE)
             ).withFilter(eq(Expression.literal("Type"),"Citizen Service")
         );
         SymbolLayer dataUnclustered2 = new SymbolLayer("unclustered-points2", "data-layer");
         dataUnclustered2.withProperties(
                 iconImage("education-image"),
-                iconSize(0.67f),
+                iconSize(0.70f),
                 visibility(VISIBLE)
             ).withFilter(eq(Expression.literal("Type"),"Education")
         );
         SymbolLayer dataUnclustered3 = new SymbolLayer("unclustered-points3", "data-layer");
         dataUnclustered3.withProperties(
                 iconImage("health-image"),
-                iconSize(0.67f),
+                iconSize(0.70f),
                 visibility(VISIBLE)
             ).withFilter(eq(Expression.literal("Type"),"Health")
         );
         SymbolLayer dataUnclustered4 = new SymbolLayer("unclustered-points4", "data-layer");
         dataUnclustered4.withProperties(
                 iconImage("sport-image"),
-                iconSize(0.67f),
+                iconSize(0.70f),
                 visibility(VISIBLE)
             ).withFilter(eq(Expression.literal("Type"),"Sport")
         );

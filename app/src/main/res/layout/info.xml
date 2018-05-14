@@ -60,6 +60,12 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/icons"
+        android:background="#f2f2f2"/>
+
     <ImageView
         android:id="@+id/SFI_logo"
         android:layout_width="wrap_content"
@@ -67,6 +73,7 @@
         android:layout_alignLeft="@+id/icons"
         android:layout_alignStart="@+id/icons"
         android:layout_below="@+id/icons"
+        android:layout_marginTop="10dp"
         android:contentDescription="@string/science_foundation_ireland_logo"
         app:srcCompat="@drawable/ic_sfi_logo_2016__master_colour" />
 
@@ -77,7 +84,17 @@
         android:layout_alignEnd="@+id/icons"
         android:layout_alignRight="@+id/icons"
         android:layout_below="@+id/icons"
+        android:layout_marginTop="10dp"
         android:contentDescription="@string/building_city_dashboards_logo"
         app:srcCompat="@drawable/ic_building_city_dashboards_horizontal_logo___colour" />
+
+    <ImageView
+        android:id="@+id/MU_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/SFI_logo"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/maynooth_university_logo"
+        app:srcCompat="@drawable/ic_maynooth_university_logo" />
 
 </RelativeLayout>
