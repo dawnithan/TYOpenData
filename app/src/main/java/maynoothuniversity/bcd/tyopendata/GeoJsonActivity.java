@@ -1,12 +1,15 @@
 package maynoothuniversity.bcd.tyopendata;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +45,8 @@ import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
+import org.w3c.dom.Text;
+
 import java.io.InputStream;
 import java.util.List;
 
@@ -48,12 +54,16 @@ import timber.log.Timber;
 
 import static com.mapbox.mapboxsdk.style.expressions.Expression.all;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.gte;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.literal;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.lt;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.toNumber;
 import static com.mapbox.mapboxsdk.style.layers.Property.NONE;
 import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor;
@@ -127,7 +137,7 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
         }
 
         // Select a marker
-        if (!features.isEmpty()) {
+        else if (!features.isEmpty()) {
             Feature selectedFeature = features.get(0);
 //            String title = selectedFeature.getStringProperty("Name");
 //            Toast.makeText(this, "You selected " + title, Toast.LENGTH_SHORT).show();
@@ -166,7 +176,7 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
 
             name.setText(selectedFeature.getStringProperty("Name"));
             address.setText(selectedFeature.getStringProperty("Address"));
-            if(selectedFeature.getStringProperty("Phone").length() > 0) phone.setText(String.format("Tel: %s", selectedFeature.getStringProperty("Phone")));
+            if(selectedFeature.getStringProperty("Phone").length() > 0) phone.setText(selectedFeature.getStringProperty("Phone"));
 
             String web = selectedFeature.getStringProperty("Website");
             String mail = selectedFeature.getStringProperty("Email");
@@ -234,30 +244,34 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
         SymbolLayer dataUnclustered1 = new SymbolLayer("unclustered-points1", "data-layer");
         dataUnclustered1.withProperties(
                 iconImage("citizen-image"),
+                iconIgnorePlacement(true),
                 iconSize(0.70f),
                 visibility(VISIBLE)
-            ).withFilter(eq(Expression.literal("Type"),"Citizen Service")
+            ).withFilter(eq(literal("Type"),"Citizen Service")
         );
         SymbolLayer dataUnclustered2 = new SymbolLayer("unclustered-points2", "data-layer");
         dataUnclustered2.withProperties(
                 iconImage("education-image"),
+                iconIgnorePlacement(true),
                 iconSize(0.70f),
                 visibility(VISIBLE)
-            ).withFilter(eq(Expression.literal("Type"),"Education")
+            ).withFilter(eq(literal("Type"),"Education")
         );
         SymbolLayer dataUnclustered3 = new SymbolLayer("unclustered-points3", "data-layer");
         dataUnclustered3.withProperties(
                 iconImage("health-image"),
+                iconIgnorePlacement(true),
                 iconSize(0.70f),
                 visibility(VISIBLE)
-            ).withFilter(eq(Expression.literal("Type"),"Health")
+            ).withFilter(eq(literal("Type"),"Health")
         );
         SymbolLayer dataUnclustered4 = new SymbolLayer("unclustered-points4", "data-layer");
         dataUnclustered4.withProperties(
                 iconImage("sport-image"),
+                iconIgnorePlacement(true),
                 iconSize(0.70f),
                 visibility(VISIBLE)
-            ).withFilter(eq(Expression.literal("Type"),"Sport")
+            ).withFilter(eq(literal("Type"),"Sport")
         );
 
         mapboxMap.addLayer(dataUnclustered1);
@@ -271,9 +285,17 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
                     circleColor(layers[i][1]),
                     circleRadius(18f)
             );
+
+            Expression pointCount = toNumber(get("point_count"));
+
+            // Add a filter to the cluster layer that hides the circles based on "point_count"
             circlesData.setFilter(
-                    i == 0 ? gte(Expression.literal(("point_count")), layers[i][0]) :
-                            all(gte(Expression.literal(("point_count")), layers[i][0]), lt(Expression.literal(("point_count")), layers[i - 1][0]))
+                    i == 0
+                            ? gte(pointCount, literal(layers[i][0])) :
+                            all(
+                                    gte(pointCount, literal(layers[i][0])),
+                                    lt(pointCount, literal(layers[i - 1][0]))
+                            )
             );
             mapboxMap.addLayer(circlesData);
         }
@@ -323,6 +345,7 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
                 infoBuilder.setView(view);
                 infoBuilder.setTitle("Info");
                 infoBuilder.setMessage(R.string.info_message);
+
                 infoBuilder.setPositiveButton("CLOSE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -333,7 +356,55 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
                 AlertDialog dialog = infoBuilder.create();
                 //dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f2f2f2")));
                 dialog.show();
-                ((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+
+                TextView creditTxt = dialog.findViewById(R.id.credits);
+                if (creditTxt != null) {
+                    creditTxt.setText(getString(R.string.credits_string));
+                    creditTxt.setMovementMethod(LinkMovementMethod.getInstance());
+                }
+                //((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+
+                ImageView sfiLogo = dialog.findViewById(R.id.SFI_logo);
+                ImageView bcdLogo = dialog.findViewById(R.id.BCD_logo);
+                ImageView muLogo = dialog.findViewById(R.id.MU_logo);
+                ImageView stdomLogo = dialog.findViewById(R.id.StDom_logo);
+                if (sfiLogo != null) {
+                    sfiLogo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.sfi.ie/"));
+                            startActivity(i);
+                        }
+                    });
+                }
+                if (bcdLogo != null) {
+                    bcdLogo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://dashboards.maynoothuniversity.ie/"));
+                            startActivity(i);
+                        }
+                    });
+                }
+                if (muLogo != null) {
+                    muLogo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.maynoothuniversity.ie/"));
+                            startActivity(i);
+                        }
+                    });
+                }
+                if (stdomLogo != null) {
+                    stdomLogo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://stdominicsballyfermot.ie/"));
+                            startActivity(i);
+                        }
+                    });
+                }
+
                 break;
 
 //            case R.id.citizen_toggle:

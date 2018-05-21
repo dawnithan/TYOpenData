@@ -4,13 +4,28 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <TextView
+        android:id="@+id/credits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:paddingLeft="30dp"
+        android:paddingStart="30dp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:textColor="@android:color/primary_text_light"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true" />
+
     <LinearLayout
         android:id="@+id/icons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/credits"
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
-        android:layout_alignParentTop="true"
         android:layout_centerVertical="true">
 
         <TextView
@@ -93,8 +108,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/SFI_logo"
-        android:layout_centerHorizontal="true"
+        android:layout_toLeftOf="@+id/BCD_logo"
+        android:layout_toStartOf="@+id/BCD_logo"
         android:contentDescription="@string/maynooth_university_logo"
         app:srcCompat="@drawable/ic_maynooth_university_logo" />
+
+    <ImageView
+        android:id="@+id/StDom_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/icons"
+        android:layout_alignLeft="@+id/BCD_logo"
+        android:layout_alignRight="@+id/icons"
+        android:layout_alignStart="@+id/BCD_logo"
+        android:layout_below="@+id/BCD_logo"
+        android:src="@drawable/stdom_logo" />
 
 </RelativeLayout>
