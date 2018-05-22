@@ -14,7 +14,8 @@
         mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10"
         mapbox:mapbox_cameraZoom="14" />
 
-    <!-- mapbox://styles/dawnithan/cjeeajv5v670t2rpdll0pzi3k -->
+    <!-- mapbox://styles/mapbox/streets-v10 -->
+    <!-- mapbox://styles/dawnithan/cjhhq0p7y18bd2rnsbarkdg91 -->
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"

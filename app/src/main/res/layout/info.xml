@@ -8,16 +8,16 @@
         android:id="@+id/credits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:paddingLeft="30dp"
-        android:paddingStart="30dp"
-        android:paddingRight="10dp"
-        android:paddingEnd="10dp"
+        android:layout_alignLeft="@+id/icons"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/icons"
+        android:paddingEnd="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingStart="5dp"
+        android:text="@string/credits_string"
         android:textColor="@android:color/primary_text_light"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:layout_centerVertical="true"
-        android:layout_alignParentTop="true" />
+        android:textSize="13sp" />
 
     <LinearLayout
         android:id="@+id/icons"
@@ -87,8 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/icons"
         android:layout_alignStart="@+id/icons"
-        android:layout_below="@+id/icons"
-        android:layout_marginTop="10dp"
+        android:layout_alignTop="@+id/BCD_logo"
         android:contentDescription="@string/science_foundation_ireland_logo"
         app:srcCompat="@drawable/ic_sfi_logo_2016__master_colour" />
 
@@ -117,6 +116,7 @@
         android:id="@+id/StDom_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/MU_logo"
         android:layout_alignEnd="@+id/icons"
         android:layout_alignLeft="@+id/BCD_logo"
         android:layout_alignRight="@+id/icons"

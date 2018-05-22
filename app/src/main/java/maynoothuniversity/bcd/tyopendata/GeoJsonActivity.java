@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
@@ -359,7 +360,6 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
 
                 TextView creditTxt = dialog.findViewById(R.id.credits);
                 if (creditTxt != null) {
-                    creditTxt.setText(getString(R.string.credits_string));
                     creditTxt.setMovementMethod(LinkMovementMethod.getInstance());
                 }
                 //((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
