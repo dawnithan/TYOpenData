@@ -6,9 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PointF;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +16,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
@@ -45,8 +42,6 @@ import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-
-import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.util.List;
@@ -358,10 +353,11 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
                 //dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f2f2f2")));
                 dialog.show();
 
-                TextView creditTxt = dialog.findViewById(R.id.credits);
-                if (creditTxt != null) {
-                    creditTxt.setMovementMethod(LinkMovementMethod.getInstance());
-                }
+                TextView contact = dialog.findViewById(R.id.contact_us);
+                TextView credits = dialog.findViewById(R.id.credits);
+                if (contact != null) contact.setMovementMethod(LinkMovementMethod.getInstance());
+                if (credits != null) credits.setMovementMethod(LinkMovementMethod.getInstance());
+
                 //((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
 
                 ImageView sfiLogo = dialog.findViewById(R.id.SFI_logo);
@@ -425,60 +421,6 @@ public class GeoJsonActivity extends AppCompatActivity implements OnMapReadyCall
 //                break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void toggle(String type) {
-        if (type.equals("CS")) {
-            changeLayer("unclustered-points1");
-        }
-        if (type.equals("Edu")) {
-            changeLayer("unclustered-points2");
-        }
-        if (type.equals("Health")) {
-            changeLayer("unclustered-points3");
-        }
-        if (type.equals("Sport")) {
-            changeLayer("unclustered-points4");
-        }
-    }
-
-    private void changeLayer(String layerName) {
-        // toggle the individual markers
-        Layer layer_points = mapboxMap.getLayer(layerName);
-        if (layer_points != null) {
-            if (VISIBLE.equals(layer_points.getVisibility().getValue())) {
-                layer_points.setProperties(visibility(NONE));
-            } else {
-                layer_points.setProperties(visibility(VISIBLE));
-            }
-        }
-        for(int i = 0; i <= 3; i++) {
-            // toggle circles
-            Layer layer = mapboxMap.getLayer("clusterData-" + i);
-            if (layer != null) {
-                if (VISIBLE.equals(layer.getVisibility().getValue())) {
-                    layer.setProperties(visibility(NONE));
-                } else {
-                    layer.setProperties(visibility(VISIBLE));
-                }
-            }
-            Layer layer_nums = mapboxMap.getLayer("countData");
-            if (layer_nums != null) {
-                layer_nums.setProperties(
-                        textField("{point_count}"),
-                        textSize(12f),
-                        textColor(Color.WHITE)
-                );
-            }
-        }
-    }
-
-    private void makeToast(String message, int duration) {
-        if(duration == 1) {
-            Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
-        }
     }
 
     // MapBox Lifecycle Methods
